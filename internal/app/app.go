@@ -2,6 +2,7 @@ package app
 
 import (
 	"classifier/internal/tickets"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -28,6 +29,6 @@ func (a *App) Run() {
 	app.Post("/tickets", handler.CreateTicket)
 	app.Get("/tickets", handler.GetTickets)
 
-	app.Listen(":8088")
+	log.Fatal(app.Listen(":8080"))
 
 }

@@ -24,13 +24,13 @@ func (h *TicketHandler) GetTickets(c *fiber.Ctx) error {
 
 func (h *TicketHandler) CreateTicket(c *fiber.Ctx) error {
 	var body struct {
-		Title string `json:"title"`
+		Text string `json:"text"`
 	}
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "invalid body"})
 	}
 
-	err := h.usecase.CreateTicket(context.Background(), body.Title)
+	err := h.usecase.CreateTicket(context.Background(), body.Text)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}

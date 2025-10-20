@@ -33,7 +33,7 @@ func (r *ticketRepository) GetAll(ctx context.Context) ([]models.Ticket, error) 
 }
 
 func (r *ticketRepository) Create(ctx context.Context, t *models.Ticket) error {
-	res := r.db.Create(&t)
+	res := r.db.Create(t)
 
 	return res.Error
 }

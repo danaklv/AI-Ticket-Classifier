@@ -22,6 +22,6 @@ func (u *ticketUsecase) GetTickets(ctx context.Context) ([]models.Ticket, error)
 	return u.repo.GetAll(ctx)
 }
 
-func (u *ticketUsecase) CreateTicket(ctx context.Context, title string) error {
-	return u.repo.Create(ctx, &models.Ticket{Title: title})
+func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
+	return u.repo.Create(ctx, &models.Ticket{Text: text})
 }
