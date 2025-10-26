@@ -2,7 +2,9 @@ package tickets
 
 import (
 	"classifier/internal/models"
+	"classifier/internal/outbox"
 	"context"
+	"encoding/json"
 )
 
 type TicketUsecase interface {
@@ -11,17 +13,35 @@ type TicketUsecase interface {
 }
 
 type ticketUsecase struct {
-	repo TicketRepository
+	repo       TicketRepository
+	outboxRepo outbox.OutboxRepository
 }
 
-func NewTicketUsecase(r TicketRepository) TicketUsecase {
-	return &ticketUsecase{repo: r}
+func NewTicketUsecase(r TicketRepository, or outbox.OutboxRepository) TicketUsecase {
+	return &ticketUsecase{repo: r, outboxRepo: or}
 }
 
 func (u *ticketUsecase) GetTickets(ctx context.Context) ([]models.Ticket, error) {
 	return u.repo.GetAll(ctx)
 }
 
+// func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
+
+// 	// return u.repo.Create(ctx, &models.Ticket{Text: text})
+
+// }
+
 func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
-	return u.repo.Create(ctx, &models.Ticket{Text: text})
+	ticket := &models.Ticket{
+		Text:     text,
+		Category: "pending",
+	}
+
+	event := map[string]any{
+		"text": text,
+	}
+	payload, _ := json.Marshal(event)
+
+	
+	return u.repo.CreateWithOutbox(ctx, ticket, "ticket_created", payload)
 }

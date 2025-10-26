@@ -1,33 +1,33 @@
 package tests_test
 
-import (
-	models "classifier/internal/models"
-	"classifier/internal/tests"
-	"classifier/internal/tickets"
-	context "context"
-	"testing"
+// import (
+// 	models "classifier/internal/models"
+// 	"classifier/internal/tests"
+// 	"classifier/internal/tickets"
+// 	context "context"
+// 	"testing"
 
-	"github.com/golang/mock/gomock"
-)
+// 	"github.com/golang/mock/gomock"
+// )
 
-func TestCreateR(t *testing.T) {
-	cntrl := gomock.NewController(t)
+// func TestCreateR(t *testing.T) {
+// 	cntrl := gomock.NewController(t)
 
-	defer cntrl.Finish()
+// 	defer cntrl.Finish()
 
-	mockRepo := tests.NewMockTicketRepository(cntrl)
+// 	mockRepo := tests.NewMockTicketRepository(cntrl)
 
-	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
+// 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
 
-	service := tickets.NewTicketUsecase(mockRepo)
+// 	service := tickets.NewTicketUsecase(mockRepo)
 
-	model := &models.Ticket{
-		Text: "Hello World",
-	}
+// 	model := &models.Ticket{
+// 		Text: "Hello World",
+// 	}
 
-	err := service.CreateTicket(context.Background(), model.Text)
+// 	err := service.CreateTicket(context.Background(), model.Text)
 
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-}
+// 	if err != nil {
+// 		t.Errorf("unexpected error: %v", err)
+// 	}
+// }

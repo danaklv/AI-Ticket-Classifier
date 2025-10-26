@@ -10,6 +10,9 @@ import (
 
 type Config struct {
 	Conn string
+	KafkaBroker string
+	KafkaTopic string
+	
 }
 
 func Load() *Config {
@@ -23,10 +26,15 @@ func Load() *Config {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
+	kafkaBroker := os.Getenv("KAFKA_BROKER")
+	kafkaTopic := os.Getenv("KAFKA_TOPIC")
+
 	cfg := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-		return &Config{
-			Conn: cfg,
-		}
+	return &Config{
+		Conn: cfg,
+		KafkaBroker: kafkaBroker, 
+		KafkaTopic: kafkaTopic,
+	}
 }

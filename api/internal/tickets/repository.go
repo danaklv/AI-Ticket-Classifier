@@ -10,6 +10,7 @@ import (
 type TicketRepository interface {
 	GetAll(ctx context.Context) ([]models.Ticket, error)
 	Create(ctx context.Context, t *models.Ticket) error
+	CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string, payload []byte) error
 }
 
 type ticketRepository struct {
@@ -36,4 +37,24 @@ func (r *ticketRepository) Create(ctx context.Context, t *models.Ticket) error {
 	res := r.db.Create(t)
 
 	return res.Error
+}
+
+func (r *ticketRepository) CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string, payload []byte) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	
+		if err := tx.Create(t).Error; err != nil {
+			return err
+		}
+
+		
+		outbox := &models.Outbox{
+			EventType: eventType,
+			Payload:   payload,
+		}
+		if err := tx.Create(outbox).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
