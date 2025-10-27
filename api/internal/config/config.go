@@ -28,8 +28,8 @@ func Load() *Config {
 	dbname := os.Getenv("DB_NAME")
 
 	kafkaBroker := os.Getenv("KAFKA_BROKER")
-	kafkaProducerTopic := os.Getenv("KAFKA_CONSUMER_TOPIC")
-	kafkaConsumerTopic := os.Getenv("KAFKA_PRODUCER_TOPIC")
+	kafkaConsumerTopic := os.Getenv("KAFKA_CONSUMER_TOPIC")
+	kafkaProducerTopic := os.Getenv("KAFKA_PRODUCER_TOPIC")
 
 	cfg := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
