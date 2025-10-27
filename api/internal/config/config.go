@@ -9,18 +9,21 @@ import (
 )
 
 type Config struct {
-	Conn string
-	KafkaBroker string
+	Conn               string
+	KafkaBroker        string
 	KafkaProducerTopic string
 	KafkaConsumerTopic string
-	
 }
 
 func Load() *Config {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal(err)
+
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
+
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
@@ -35,8 +38,8 @@ func Load() *Config {
 		host, port, user, password, dbname)
 
 	return &Config{
-		Conn: cfg,
-		KafkaBroker: kafkaBroker, 
+		Conn:               cfg,
+		KafkaBroker:        kafkaBroker,
 		KafkaProducerTopic: kafkaProducerTopic,
 		KafkaConsumerTopic: kafkaConsumerTopic,
 	}
