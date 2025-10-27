@@ -20,10 +20,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	producer := kafka.NewProducer(cfg.KafkaBroker, cfg.KafkaTopic)
+	producer := kafka.NewProducer(cfg.KafkaBroker, cfg.KafkaProducerTopic)
+
 	defer producer.Close()
 
-	a := app.NewApp(db, producer)
+	consumer := kafka.NewConsumer(cfg.KafkaBroker, cfg.KafkaConsumerTopic, "go-result-consumer")
+
+	defer consumer.Close()
+
+	a := app.NewApp(db, producer, consumer)
 	a.Run()
 
 }
+

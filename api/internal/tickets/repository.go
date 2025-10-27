@@ -3,6 +3,7 @@ package tickets
 import (
 	"classifier/internal/models"
 	"context"
+	"encoding/json"
 
 	"gorm.io/gorm"
 )
@@ -11,6 +12,7 @@ type TicketRepository interface {
 	GetAll(ctx context.Context) ([]models.Ticket, error)
 	Create(ctx context.Context, t *models.Ticket) error
 	CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string, payload []byte) error
+	UpdateCategoryByID(ctx context.Context, id int64, category string) error
 }
 
 type ticketRepository struct {
@@ -39,14 +41,30 @@ func (r *ticketRepository) Create(ctx context.Context, t *models.Ticket) error {
 	return res.Error
 }
 
+func (r *ticketRepository) UpdateCategoryByID(ctx context.Context, id int64, category string) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+
+		if err := tx.Model(&models.Ticket{}).
+			Where("id = ?", id).
+			Update("category", category).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}
+
 func (r *ticketRepository) CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string, payload []byte) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-	
+
 		if err := tx.Create(t).Error; err != nil {
 			return err
 		}
+		event := map[string]any{
+			"id":   t.ID,
+			"text": t.Text,
+		}
+		payload, _ := json.Marshal(event)
 
-		
 		outbox := &models.Outbox{
 			EventType: eventType,
 			Payload:   payload,

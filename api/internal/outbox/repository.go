@@ -21,7 +21,6 @@ func NewOutboxRepository(db *gorm.DB) OutboxRepository {
 	return &outboxRepository{db: db}
 }
 
-
 func (r *outboxRepository) AddEvent(ctx context.Context, eventType string, payload []byte) error {
 	outbox := &models.Outbox{
 		EventType: eventType,
@@ -29,7 +28,6 @@ func (r *outboxRepository) AddEvent(ctx context.Context, eventType string, paylo
 	}
 	return r.db.WithContext(ctx).Create(outbox).Error
 }
-
 
 func (r *outboxRepository) GetUnsent(ctx context.Context, limit int) ([]models.Outbox, error) {
 	var events []models.Outbox
@@ -41,12 +39,11 @@ func (r *outboxRepository) GetUnsent(ctx context.Context, limit int) ([]models.O
 	return events, err
 }
 
-
 func (r *outboxRepository) MarkAsSent(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).
 		Model(&models.Outbox{}).
 		Where("id = ?", id).
 		Updates(map[string]interface{}{
-			"sent":    true,
+			"sent": true,
 		}).Error
 }

@@ -1,0 +1,6 @@
+confluent-kafka
+joblib
+pandas
+numpy
+scikit-learn
+scipy

@@ -4,6 +4,7 @@ import (
 	"classifier/internal/kafka"
 	"classifier/internal/outbox"
 	"classifier/internal/tickets"
+	"classifier/internal/worker"
 	"context"
 	"log"
 
@@ -14,10 +15,11 @@ import (
 type App struct {
 	db       *gorm.DB
 	producer *kafka.Producer
+	consumer *kafka.Consumer
 }
 
-func NewApp(db *gorm.DB, producer *kafka.Producer) *App {
-	return &App{db: db, producer: producer}
+func NewApp(db *gorm.DB, producer *kafka.Producer, consumer *kafka.Consumer) *App {
+	return &App{db: db, producer: producer, consumer: consumer}
 }
 
 func (a *App) Run() {
@@ -35,6 +37,14 @@ func (a *App) Run() {
 	app.Get("/tickets", handler.GetTickets)
 
 	outboxWorker := outbox.NewOutboxWorker(outboxRepo, a.producer)
+	classifierUsecase := tickets.NewTicketClassifierUsecase(ticketRepo)
+	consumerWorker := worker.NewTicketConsumerWorker(a.consumer, classifierUsecase)
+
+	go func() {
+		ctx := context.Background()
+		log.Println("Kafka consumer worker started...")
+		consumerWorker.Run(ctx)
+	}()
 
 	go func() {
 		ctx := context.Background()

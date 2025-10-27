@@ -25,12 +25,6 @@ func (u *ticketUsecase) GetTickets(ctx context.Context) ([]models.Ticket, error)
 	return u.repo.GetAll(ctx)
 }
 
-// func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
-
-// 	// return u.repo.Create(ctx, &models.Ticket{Text: text})
-
-// }
-
 func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
 	ticket := &models.Ticket{
 		Text:     text,
@@ -42,6 +36,5 @@ func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
 	}
 	payload, _ := json.Marshal(event)
 
-	
 	return u.repo.CreateWithOutbox(ctx, ticket, "ticket_created", payload)
 }
