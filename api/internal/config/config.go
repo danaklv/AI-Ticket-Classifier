@@ -17,11 +17,16 @@ type Config struct {
 
 func Load() *Config {
 
-	if _, err := os.Stat(".env"); err == nil {
-		err := godotenv.Load(".env")
-		if err != nil {
-			log.Fatal(err)
-		}
+	// if _, err := os.Stat(".env"); err == nil {
+	// 	err := godotenv.Load(".env")
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// }
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	host := os.Getenv("DB_HOST")

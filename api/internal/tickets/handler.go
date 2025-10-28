@@ -33,7 +33,7 @@ func (h *TicketHandler) CreateTicket(c *fiber.Ctx) error {
 
 	err := h.usecase.CreateTicket(context.Background(), body.Text)
 	if err != nil {
-		log.Printf("Ошибка при создании тикета: %v", err)
+		 log.Printf("Ошибка при создании тикета: %v", err)
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(201).JSON(fiber.Map{"message": "created"})

@@ -11,7 +11,7 @@ import (
 type TicketRepository interface {
 	GetAll(ctx context.Context) ([]models.Ticket, error)
 	Create(ctx context.Context, t *models.Ticket) error
-	CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string, payload []byte) error
+	CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string) error
 	UpdateCategoryByID(ctx context.Context, id int64, category string) error
 }
 
@@ -53,7 +53,7 @@ func (r *ticketRepository) UpdateCategoryByID(ctx context.Context, id int64, cat
 	})
 }
 
-func (r *ticketRepository) CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string, payload []byte) error {
+func (r *ticketRepository) CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 
 		if err := tx.Create(t).Error; err != nil {

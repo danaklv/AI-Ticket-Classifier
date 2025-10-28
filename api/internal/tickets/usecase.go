@@ -4,7 +4,6 @@ import (
 	"classifier/internal/models"
 	"classifier/internal/outbox"
 	"context"
-	"encoding/json"
 )
 
 type TicketUsecase interface {
@@ -31,10 +30,11 @@ func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
 		Category: "pending",
 	}
 
-	event := map[string]any{
-		"text": text,
-	}
-	payload, _ := json.Marshal(event)
+	// event := map[string]any{
+	// 	"text": text,
+	// }
 
-	return u.repo.CreateWithOutbox(ctx, ticket, "ticket_created", payload)
+	// payload, _ := json.Marshal(event)
+
+	return u.repo.CreateWithOutbox(ctx, ticket, "ticket_created")
 }

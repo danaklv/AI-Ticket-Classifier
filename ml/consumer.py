@@ -3,8 +3,8 @@ from classifier import predict_category
 import json
 import time
 
-# KAFKA_BROKER = "localhost:9092"
-KAFKA_BROKER = "broker:9092"
+KAFKA_BROKER = "localhost:9094"
+# KAFKA_BROKER = "broker:9092"
 INPUT_TOPIC = "tickets"
 OUTPUT_TOPIC = "classified_tickets"
 

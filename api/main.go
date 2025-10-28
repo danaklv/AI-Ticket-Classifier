@@ -14,11 +14,12 @@ func main() {
 	cfg := config.Load()
 
 	db, err := database.Connect(cfg.Conn)
-	db.AutoMigrate(&models.Ticket{}, &models.Outbox{})
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db.AutoMigrate(&models.Ticket{}, &models.Outbox{})
 
 	producer := kafka.NewProducer(cfg.KafkaBroker, cfg.KafkaProducerTopic)
 
@@ -32,4 +33,3 @@ func main() {
 	a.Run()
 
 }
-
