@@ -2,6 +2,7 @@ from confluent_kafka import Consumer, Producer
 from classifier import predict_category
 import json
 import time
+import uuid
 
 KAFKA_BROKER = "localhost:9094"
 # KAFKA_BROKER = "broker:9092"
@@ -43,6 +44,7 @@ while True:
         print("---------", ticket.get("id"))
 
         result = {
+            "event_id": str(uuid.uuid4()),
             "ticket_id": ticket.get("id"),
             "subject": subject,
             "body": body,
