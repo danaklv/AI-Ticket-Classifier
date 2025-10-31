@@ -2,7 +2,6 @@ import joblib
 import numpy as np
 from scipy.sparse import hstack
 
-# Загружаем модель и вспомогательные объекты
 model = joblib.load("model/ticket_classifier_final.pkl")
 vecs = joblib.load("model/vectorizers_final.pkl")
 
@@ -11,11 +10,11 @@ body_vectorizer = vecs["body_vectorizer"]
 scaler = vecs["scaler"]
 
 def predict_category(subject: str, body: str):
-    # Векторизация текста
+   
     X_sub = subject_vectorizer.transform([subject])
     X_body = body_vectorizer.transform([body])
 
-    # Простейшие числовые признаки
+
     len_subject = len(subject.split())
     len_body = len(body.split())
     has_urgent = int("urgent" in body.lower())
@@ -25,9 +24,9 @@ def predict_category(subject: str, body: str):
 
     X_num_scaled = scaler.transform(numeric_features)
 
-    # Объединяем всё в один вектор
+   
     X_final = hstack([X_sub, X_body, X_num_scaled])
 
-    # Предсказываем категорию
+   
     pred = model.predict(X_final)[0]
     return pred
