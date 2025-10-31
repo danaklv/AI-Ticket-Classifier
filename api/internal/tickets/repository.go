@@ -4,6 +4,7 @@ import (
 	"classifier/internal/models"
 	"context"
 	"encoding/json"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -12,7 +13,7 @@ type TicketRepository interface {
 	GetAll(ctx context.Context) ([]models.Ticket, error)
 	Create(ctx context.Context, t *models.Ticket) error
 	CreateWithOutbox(ctx context.Context, t *models.Ticket, eventType string) error
-	UpdateCategoryByID(ctx context.Context, id int64, category string) error
+	UpdateCategoryByID(ctx context.Context, id int64, category string, event_id string) error
 }
 
 type ticketRepository struct {
@@ -41,8 +42,22 @@ func (r *ticketRepository) Create(ctx context.Context, t *models.Ticket) error {
 	return res.Error
 }
 
-func (r *ticketRepository) UpdateCategoryByID(ctx context.Context, id int64, category string) error {
+func (r *ticketRepository) UpdateCategoryByID(ctx context.Context, id int64, category string, event_id string) error {
+
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+
+		event := models.ProcessedEvents{
+			EventID:     event_id,
+			TicketID:    id,
+			ProcessedAt: time.Now(),
+		}
+
+		if err := tx.Create(&event).Error; err != nil {
+			if err == gorm.ErrDuplicatedKey {
+				return nil
+			}
+			return err
+		}
 
 		if err := tx.Model(&models.Ticket{}).
 			Where("id = ?", id).

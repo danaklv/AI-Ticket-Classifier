@@ -6,10 +6,10 @@ type Ticket struct {
 	Category string `json:"category"`
 }
 
-type ClassifiedTicket struct {
-	ID                any    `json:"id"`
-	Subject           string `json:"subject"`
-	Body              string `json:"body"`
-	PredictedCategory string `json:"predicted_category"`
-	ProcessedAt       string `json:"processed_at"`
-}
+// type ClassifiedTicket struct {
+// 	ID                any    `json:"id"`
+// 	Subject           string `json:"subject"`
+// 	Body              string `json:"body"`
+// 	PredictedCategory string `json:"predicted_category"`
+// 	ProcessedAt       string `json:"processed_at"`
+// }

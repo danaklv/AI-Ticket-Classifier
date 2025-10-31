@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -13,9 +14,13 @@ type Producer struct {
 
 func NewProducer(brokerURL, topic string) *Producer {
 	w := &kafka.Writer{
-		Addr:     kafka.TCP(brokerURL),
-		Topic:    topic,
-		Balancer: &kafka.LeastBytes{},
+		Addr:         kafka.TCP(brokerURL),
+		Topic:        topic,
+		Balancer:     &kafka.LeastBytes{},
+		RequiredAcks: kafka.RequireAll,
+		Async:        false,
+		WriteTimeout: 10 * time.Second,
+		MaxAttempts:  5,
 	}
 	return &Producer{writer: w}
 }
