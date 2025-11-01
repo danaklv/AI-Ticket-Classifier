@@ -30,11 +30,5 @@ func (u *ticketUsecase) CreateTicket(ctx context.Context, text string) error {
 		Category: "pending",
 	}
 
-	// event := map[string]any{
-	// 	"text": text,
-	// }
-
-	// payload, _ := json.Marshal(event)
-
 	return u.repo.CreateWithOutbox(ctx, ticket, "ticket_created")
 }

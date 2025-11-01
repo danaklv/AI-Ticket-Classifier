@@ -17,30 +17,32 @@ func NewOutboxWorker(repo OutboxRepository, producer *kafka.Producer) *OutboxWor
 }
 
 func (w *OutboxWorker) Run(ctx context.Context) {
+
+	t := time.NewTicker(3 * time.Second)
+	defer t.Stop()
 	for {
-	
-		events, err := w.repo.GetUnsent(ctx, 10)
-		if err != nil {
-			log.Println("Ошибка получения событий:", err)
-			time.Sleep(5 * time.Second)
-			continue
-		}
-
-
-		for _, e := range events {
-			err := w.producer.SendMessage(ctx, e.EventType, e.Payload)
+		select {
+		case <-ctx.Done():
+			log.Println("OutboxWorker stop")
+			return
+		case <-t.C:
+			events, err := w.repo.GetUnsent(ctx, 10)
 			if err != nil {
-				log.Printf("Ошибка отправки события %d: %v", e.ID, err)
+				log.Println("get unsent:", err)
+
 				continue
 			}
+			for _, e := range events {
+				err := w.producer.SendMessage(ctx, e.EventType, e.Payload)
+				if err != nil {
+					log.Printf("send message %d: %v", e.ID, err)
+					continue
+				}
 
-		
-			if err := w.repo.MarkAsSent(ctx, e.ID); err != nil {
-				log.Printf("Ошибка обновления статуса %d: %v", e.ID, err)
+				if err := w.repo.MarkAsSent(ctx, e.ID); err != nil {
+					log.Printf("mark %d: %v", e.ID, err)
+				}
 			}
 		}
-
-	
-		time.Sleep(3 * time.Second)
 	}
 }

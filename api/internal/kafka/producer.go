@@ -26,6 +26,7 @@ func NewProducer(brokerURL, topic string) *Producer {
 }
 
 func (p *Producer) SendMessage(ctx context.Context, key string, value []byte) error {
+	
 	err := p.writer.WriteMessages(ctx, kafka.Message{
 		Key:   []byte(key),
 		Value: value,
